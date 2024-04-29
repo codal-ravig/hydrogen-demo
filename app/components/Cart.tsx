@@ -55,7 +55,7 @@ function CartLines({
 
   return (
     <div aria-labelledby="cart-lines">
-      <ul>
+      <ul className="rounded-lg md:w-2/3">
         {lines.nodes.map((line) => (
           <CartLineItem key={line.id} line={line} layout={layout} />
         ))}
@@ -76,7 +76,10 @@ function CartLineItem({
   const lineItemUrl = useVariantUrl(product.handle, selectedOptions);
 
   return (
-    <li key={id} className="cart-line">
+    <li
+      key={id}
+      className="cart-line justify-between mb-6 rounded-lg bg-white p-6 shadow-md sm:flex sm:justify-start"
+    >
       {image && (
         <Image
           alt={title}
@@ -85,35 +88,42 @@ function CartLineItem({
           height={100}
           loading="lazy"
           width={100}
+          className="w-full rounded-lg sm:w-40"
         />
       )}
-
-      <div>
-        <Link
-          prefetch="intent"
-          to={lineItemUrl}
-          onClick={() => {
-            if (layout === 'aside') {
-              // close the drawer
-              window.location.href = lineItemUrl;
-            }
-          }}
-        >
-          <p>
-            <strong>{product.title}</strong>
-          </p>
-        </Link>
-        <CartLinePrice line={line} as="span" />
-        <ul>
-          {selectedOptions.map((option) => (
-            <li key={option.name}>
-              <small>
+      <div className="sm:ml-4 sm:flex sm:w-full sm:justify-between">
+        <div className="mt-5 sm:mt-0">
+          <Link
+            prefetch="intent"
+            to={lineItemUrl}
+            onClick={() => {
+              if (layout === 'aside') {
+                // close the drawer
+                window.location.href = lineItemUrl;
+              }
+            }}
+          >
+            <h2 className="text-lg font-bold text-gray-900">{product.title}</h2>
+            {selectedOptions.map((option) => (
+              <p key={option.name} className="mt-1 text-xs text-gray-700">
                 {option.name}: {option.value}
-              </small>
-            </li>
-          ))}
-        </ul>
-        <CartLineQuantity line={line} />
+              </p>
+            ))}
+          </Link>
+          <CartLinePrice line={line} as="span" />
+          <ul>
+            {selectedOptions.map((option) => (
+              <li key={option.name}>
+                <small>
+                  {option.name}: {option.value}
+                </small>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="mt-4 flex justify-between sm:space-y-6 sm:mt-0 sm:block sm:space-x-6">
+          <CartLineQuantity line={line} />
+        </div>
       </div>
     </li>
   );
@@ -169,7 +179,22 @@ function CartLineRemoveButton({lineIds}: {lineIds: string[]}) {
       action={CartForm.ACTIONS.LinesRemove}
       inputs={{lineIds}}
     >
-      <button type="submit">Remove</button>
+      <button type="submit">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth="1.5"
+          stroke="currentColor"
+          className="h-5 w-5 cursor-pointer duration-150 hover:text-red-500"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M6 18L18 6M6 6l12 12"
+          ></path>
+        </svg>
+      </button>
     </CartForm>
   );
 }
@@ -183,42 +208,52 @@ function CartLineQuantity({line}: {line: CartLine}) {
 
   return (
     <div className="cart-line-quantity">
-      <small>Quantity: {quantity} &nbsp;&nbsp;</small>
-      <CartLineUpdateButton lines={[{id: lineId, quantity: prevQuantity}]}>
-        <button
-          aria-label="Decrease quantity"
-          disabled={quantity <= 1}
-          name="decrease-quantity"
-          value={prevQuantity}
-          onClick={() =>
-            notificationCtx.showNotification({
-              title: 'dddd',
-              message: `Product Quantity removed - ${line?.merchandise?.product?.title} :${line?.merchandise?.title}`,
-              status: 'error',
-            })
-          }
-        >
-          <span>&#8722; </span>
-        </button>
-      </CartLineUpdateButton>
-      &nbsp;
-      <CartLineUpdateButton lines={[{id: lineId, quantity: nextQuantity}]}>
-        <button
-          aria-label="Increase quantity"
-          name="increase-quantity"
-          value={nextQuantity}
-          onClick={() =>
-            notificationCtx.showNotification({
-              title: 'dddd',
-              message: `Product Quantity added - ${line?.merchandise?.product?.title} :${line?.merchandise?.title}`,
-              status: 'success',
-            })
-          }
-        >
-          <span>&#43;</span>
-        </button>
-      </CartLineUpdateButton>
-      &nbsp;
+      <div className="mt-4 flex justify-between sm:space-y-6 sm:mt-0 sm:block sm:space-x-6">
+        <div className="flex items-center border-gray-100">
+          <CartLineUpdateButton lines={[{id: lineId, quantity: prevQuantity}]}>
+            <button
+              aria-label="Decrease quantity"
+              disabled={quantity <= 1}
+              name="decrease-quantity"
+              value={prevQuantity}
+              className="cursor-pointer rounded-l bg-gray-100 py-1 px-3.5 duration-100 hover:bg-blue-500 hover:text-blue-50"
+              onClick={() =>
+                notificationCtx.showNotification({
+                  title: 'dddd',
+                  message: `Product Quantity removed - ${line?.merchandise?.product?.title} :${line?.merchandise?.title}`,
+                  status: 'error',
+                })
+              }
+            >
+              <span>&#8722; </span>
+            </button>
+          </CartLineUpdateButton>
+          <input
+            className="h-8 w-8 border bg-white text-center text-xs outline-none"
+            type="number"
+            value={quantity}
+            min="1"
+          />
+          <CartLineUpdateButton lines={[{id: lineId, quantity: nextQuantity}]}>
+            <button
+              aria-label="Decrease quantity"
+              disabled={quantity <= 1}
+              name="decrease-quantity"
+              value={prevQuantity}
+              onClick={() =>
+                notificationCtx.showNotification({
+                  title: 'dddd',
+                  message: `Product Quantity removed - ${line?.merchandise?.product?.title} :${line?.merchandise?.title}`,
+                  status: 'error',
+                })
+              }
+              className="cursor-pointer rounded-r bg-gray-100 py-1 px-3 duration-100 hover:bg-blue-500 hover:text-blue-50"
+            >
+              <span>&#43; </span>
+            </button>
+          </CartLineUpdateButton>
+        </div>
+      </div>
       <CartLineRemoveButton lineIds={[lineId]} />
     </div>
   );
