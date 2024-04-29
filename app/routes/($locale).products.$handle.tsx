@@ -1,4 +1,4 @@
-import {Suspense} from 'react';
+import {Suspense, useContext} from 'react';
 import {defer, redirect, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 import {
   Await,
@@ -25,6 +25,7 @@ import type {
   SelectedOption,
 } from '@shopify/hydrogen/storefront-api-types';
 import {getVariantUrl} from '~/lib/variants';
+import NotificationContext from '~/components/NotificationProvider';
 
 export const meta: MetaFunction<typeof loader> = ({data, location}) => {
   return [{title: `Hydrogen | ${data?.product.title ?? ''}`}];
@@ -227,6 +228,15 @@ function ProductForm({
   selectedVariant: ProductFragment['selectedVariant'];
   variants: Array<ProductVariantFragment>;
 }) {
+  const notificationCtx = useContext(NotificationContext);
+
+  const showTost = () => {
+    notificationCtx.showNotification({
+      title: 'dddd',
+      message: `Add to cart ${selectedVariant?.product?.title} - ${selectedVariant?.title}`,
+      status: 'success',
+    });
+  };
   return (
     <div className="product-form">
       <VariantSelector
@@ -240,7 +250,8 @@ function ProductForm({
       <AddToCartButton
         disabled={!selectedVariant || !selectedVariant.availableForSale}
         onClick={() => {
-          window.location.href = window.location.href + '#cart-aside';
+          // window.location.href = window.location.href + '#cart-aside';
+          showTost();
         }}
         lines={
           selectedVariant

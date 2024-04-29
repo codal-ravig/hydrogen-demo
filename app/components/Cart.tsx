@@ -3,6 +3,8 @@ import type {CartLineUpdateInput} from '@shopify/hydrogen/storefront-api-types';
 import {Link} from '@remix-run/react';
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import {useVariantUrl} from '~/lib/variants';
+import {useContext} from 'react';
+import NotificationContext from './NotificationProvider';
 
 type CartLine = CartApiQueryFragment['lines']['nodes'][0];
 
@@ -173,6 +175,7 @@ function CartLineRemoveButton({lineIds}: {lineIds: string[]}) {
 }
 
 function CartLineQuantity({line}: {line: CartLine}) {
+  const notificationCtx = useContext(NotificationContext);
   if (!line || typeof line?.quantity === 'undefined') return null;
   const {id: lineId, quantity} = line;
   const prevQuantity = Number(Math.max(0, quantity - 1).toFixed(0));
@@ -187,6 +190,13 @@ function CartLineQuantity({line}: {line: CartLine}) {
           disabled={quantity <= 1}
           name="decrease-quantity"
           value={prevQuantity}
+          onClick={() =>
+            notificationCtx.showNotification({
+              title: 'dddd',
+              message: `Product Quantity removed - ${line?.merchandise?.product?.title} :${line?.merchandise?.title}`,
+              status: 'error',
+            })
+          }
         >
           <span>&#8722; </span>
         </button>
@@ -197,6 +207,13 @@ function CartLineQuantity({line}: {line: CartLine}) {
           aria-label="Increase quantity"
           name="increase-quantity"
           value={nextQuantity}
+          onClick={() =>
+            notificationCtx.showNotification({
+              title: 'dddd',
+              message: `Product Quantity added - ${line?.merchandise?.product?.title} :${line?.merchandise?.title}`,
+              status: 'success',
+            })
+          }
         >
           <span>&#43;</span>
         </button>

@@ -1,5 +1,5 @@
 import {Await} from '@remix-run/react';
-import {Suspense} from 'react';
+import {Suspense, useContext, useEffect} from 'react';
 import type {
   CartApiQueryFragment,
   FooterQuery,
@@ -13,6 +13,8 @@ import {
   PredictiveSearchForm,
   PredictiveSearchResults,
 } from '~/components/Search';
+import NotificationContext from './NotificationProvider';
+import Notifications from './Notifications';
 
 export type LayoutProps = {
   cart: Promise<CartApiQueryFragment | null>;
@@ -29,6 +31,8 @@ export function Layout({
   header,
   isLoggedIn,
 }: LayoutProps) {
+  const notificationCtx = useContext(NotificationContext);
+  const activeNotification: any = notificationCtx.notification;
   return (
     <>
       <CartAside cart={cart} />
@@ -41,6 +45,13 @@ export function Layout({
           {(footer) => <Footer menu={footer?.menu} shop={header?.shop} />}
         </Await>
       </Suspense>
+      {activeNotification && (
+        <Notifications
+          title={activeNotification.title}
+          message={activeNotification.message}
+          status={activeNotification.status}
+        />
+      )}
     </>
   );
 }

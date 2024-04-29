@@ -32,6 +32,7 @@ export async function action({request, context}: ActionFunctionArgs) {
       result = await cart.updateLines(inputs.lines);
       break;
     case CartForm.ACTIONS.LinesRemove:
+      // console.log(inputs);
       result = await cart.removeLines(inputs.lineIds);
       break;
     case CartForm.ACTIONS.DiscountCodesUpdate: {

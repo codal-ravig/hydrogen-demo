@@ -20,7 +20,12 @@ import favicon from './assets/favicon.svg';
 import resetStyles from './styles/reset.css?url';
 import appStyles from './styles/app.css?url';
 import {Layout} from '~/components/Layout';
-
+import stylesheet from '~/tailwind.css?url';
+import {createContext, useContext, useEffect, useState} from 'react';
+import Notifications from './components/Notifications';
+import NotificationContext, {
+  NottificationContextProvider,
+} from './components/NotificationProvider';
 /**
  * This is important to avoid re-fetching root queries on sub-navigations
  */
@@ -45,6 +50,7 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
 export function links() {
   return [
     {rel: 'stylesheet', href: resetStyles},
+    {rel: 'stylesheet', href: stylesheet},
     {rel: 'stylesheet', href: appStyles},
     {
       rel: 'preconnect',
@@ -118,9 +124,12 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Layout {...data}>
-          <Outlet />
-        </Layout>
+        <NottificationContextProvider>
+          <Layout {...data}>
+            <Outlet />
+          </Layout>
+        </NottificationContextProvider>
+
         <ScrollRestoration nonce={nonce} />
         <Scripts nonce={nonce} />
       </body>
