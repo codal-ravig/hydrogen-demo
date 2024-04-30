@@ -55,7 +55,7 @@ function CartLines({
 
   return (
     <div aria-labelledby="cart-lines">
-      <ul className="rounded-lg md:w-2/3">
+      <ul className={`rounded-lg ${layout === 'page' && 'md:w-2/3'}`}>
         {lines.nodes.map((line) => (
           <CartLineItem key={line.id} line={line} layout={layout} />
         ))}
@@ -232,6 +232,7 @@ function CartLineQuantity({line}: {line: CartLine}) {
             className="h-8 w-8 border bg-white text-center text-xs outline-none"
             type="number"
             value={quantity}
+            disabled
             min="1"
           />
           <CartLineUpdateButton lines={[{id: lineId, quantity: nextQuantity}]}>
